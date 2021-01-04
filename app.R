@@ -26,7 +26,7 @@ colnames(Data) <- gsub("_", " ", str_to_title(colnames(Data))) # Reformatting co
   }
 }
 `Manipulated Data` <- rbind(Data[1, c(3:9, 11:21)], apply(Data[, c(3:9, 11:21)], 2, `Cumulative to Individual`))
-`Manipulated Data` <- cbind(Data[, c(1:2)], `Manipulated Data`, Data[, c(10, 22:35)])
+`Manipulated Data` <- cbind(Data[, c(1:2)], `Manipulated Data`, Data[, c(10, 22:36)])
 for (i in 1:length(unique(`Manipulated Data`$Id)))
 {
   `Manipulated Data`[head(which(`Manipulated Data`$Id == unique(`Manipulated Data`$Id)[i]), 1), ] <- Data[head(which(`Manipulated Data`$Id == unique(`Manipulated Data`$Id)[i]), 1), ]
@@ -201,8 +201,8 @@ ui <- dashboardPage(
         box(plotlyOutput(outputId = "Plots"),
           width = 16, color = "blue", title = "COVID-19 Graph", title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
           selectInput(inputId = "Select country", width = "100%", label = "Select country", choices = unique(`Manipulated Data`$`Administrative area level 1`), selected = "India"),
-          selectInput(inputId = "Plot x-axis", width = "100%", label = "Select x-axis variable", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")]),
-          selectInput(inputId = "Plot y-axis", width = "100%", label = "Select y-axis variable", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")])
+          selectInput(inputId = "Plot x-axis", width = "100%", label = "Select x-axis variable", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Date"),
+          selectInput(inputId = "Plot y-axis", width = "100%", label = "Select y-axis variable", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests")
         )
       )
     )
@@ -216,23 +216,24 @@ server <- function(input, output) {
     wrld_simpl@data <- cbind(wrld_simpl@data, as.vector(as.matrix(`Map Data`))[Locations])
     colnames(wrld_simpl@data)[ncol(wrld_simpl@data)] <- "map_value"
     Palette <- colorNumeric(palette = "viridis", domain = wrld_simpl@data$map_value, na.color = "transparent")
-    content <- paste(sep = "<br/>", input$Information, input$Time)
+    wrld_simpl@data$label <- with(wrld_simpl@data, paste("<p> <b>", NAME, "</b> </br>", input$Time, "</br>", input$Information, ":", map_value, "</p>"))
+    wrld_simpl@data$string <- paste(as.character.factor(wrld_simpl@data$NAME),rep("(Click for more)",times=nrow(wrld_simpl@data)))
     leaflet(wrld_simpl, options = leafletOptions(minZoom = 2)) %>%
       setView(lng = 78, lat = 20, zoom = 2) %>%
       addTiles() %>%
       setMaxBounds(lng1 = 180, lat1 = 84, lng2 = -140, lat2 = -84) %>%
-      addProviderTiles("CartoDB.PositronOnlyLabels") %>%
-      addPolygons(fillColor = ~ Palette(map_value), stroke = F, label = ~NAME)
+      addProviderTiles("CartoDB.VoyagerLabelsUnder") %>%
+      addPolygons(fillColor = ~ Palette(map_value), stroke = F, popup = ~label, label = ~string, highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE))
   })
   output$Plots <- renderPlotly({
     canvas <- ggplot(droplevels(`Manipulated Data`[which(`Manipulated Data`$`Administrative area level 1` == input$`Select country`), ]), aes(x = eval(parse(text = paste0("`", input$`Plot x-axis`, "`"))), y = eval(parse(text = paste0("`", input$`Plot y-axis`, "`"))))) +
       coord_cartesian()
-    plot <- canvas + geom_point(aes(
+    plot <- canvas + suppressWarnings(geom_point(aes(
       text = paste(
         input$`Plot x-axis`, ":", eval(parse(text = paste0("`", input$`Plot x-axis`, "`"))), "\n",
         input$`Plot y-axis`, ":", eval(parse(text = paste0("`", input$`Plot y-axis`, "`")))
       ), color = input$`Select country`
-    )) +
+    ))) +
       labs(x = input$`Plot x-axis`, y = input$`Plot y-axis`) +
       theme_bw() +
       theme(legend.position = "none", panel.border = element_blank())
