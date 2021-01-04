@@ -1,2 +1,2 @@
-# COVID19
+# COVID-19
 R Shiny Dashboard for tracking COVID-19 Pandemic
