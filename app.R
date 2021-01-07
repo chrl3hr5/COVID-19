@@ -53,17 +53,33 @@ for (i in 1:(nrow(Positions) / Unique))
 # User Interface
 Theme <- shinyDashboardThemeDIY(
   # General
-  appFontFamily = "Arial",
-  appFontColor = "rgb(0,0,0)",
-  bodyBackColor = "rgb(248,248,248)",
+  appFontFamily = "Maven Pro",
+  appFontColor = "rgb(255,255,255)",
+  bodyBackColor = cssGradientThreeColors(
+    direction = "down",
+    colorStart = "rgba(65,179,163,1)",
+    colorMiddle = "rgba(65,179,230,1)",
+    colorEnd = "rgba(65,179,163,1)",
+    colorStartPos = 0,
+    colorMiddlePos = 50,
+    colorEndPos = 100
+  ),
 
   # Header
   logoBackColor = "rgb(23,103,124)",
-  headerButtonBackColor = "rgb(56,161,187)",
+  headerButtonBackColor = "rgb(23,103,124)",
   headerButtonIconColor = "rgb(238,238,238)",
-  headerButtonBackColorHover = "rgb(56,161,187)",
+  headerButtonBackColorHover = "rgb(23,103,124)",
   headerButtonIconColorHover = "rgb(0,0,0)",
-  headerBackColor = "rgb(56,161,187)",
+  headerBackColor = cssGradientThreeColors(
+    direction = "right",
+    colorStart = "rgb(23,103,124)",
+    colorMiddle = "rgb(65,179,230)",
+    colorEnd = "rgb(65,179,230)",
+    colorStartPos = 0,
+    colorMiddlePos = 75,
+    colorEndPos = 100
+  ),
   headerBoxShadowSize = "0px 0px 0px",
   headerBoxShadowColor = "#aaaaaa",
 
@@ -71,14 +87,14 @@ Theme <- shinyDashboardThemeDIY(
   sidebarBackColor = cssGradientThreeColors(
     direction = "down",
     colorStart = "rgb(20,97,117)",
-    colorMiddle = "rgb(56,161,187)",
-    colorEnd = "rgb(3,22,56)",
+    colorMiddle = "rgb(65,179,230)",
+    colorEnd = "rgb(56,161,187)",
     colorStartPos = 0,
     colorMiddlePos = 50,
     colorEndPos = 100
   ),
-  sidebarShadowRadius = "3px 5px 5px",
-  sidebarShadowColor = "#aaaaaa",
+  sidebarShadowRadius = "1px 5px 5px",
+  sidebarShadowColor = "rgb(255,255,255)",
   sidebarPadding = 0,
   sidebarMenuBackColor = "transparent",
   sidebarMenuPadding = 0,
@@ -91,11 +107,11 @@ Theme <- shinyDashboardThemeDIY(
   sidebarTabBorderWidth = 1,
   sidebarTabBackColorSelected = cssGradientThreeColors(
     direction = "right",
-    colorStart = "rgba(44,222,235,1)",
-    colorMiddle = "rgba(44,222,235,1)",
-    colorEnd = "rgba(0,255,213,1)",
+    colorStart = "rgb(65,179,220)",
+    colorMiddle = "rgb(65,179,230)",
+    colorEnd = "rgb(65,179,220)",
     colorStartPos = 0,
-    colorMiddlePos = 30,
+    colorMiddlePos = 50,
     colorEndPos = 100
   ),
   sidebarTabTextColorSelected = "rgb(0,0,0)",
@@ -106,11 +122,11 @@ Theme <- shinyDashboardThemeDIY(
   sidebarTabRadiusHover = "0px 20px 20px 0px",
   sidebarTabBackColorHover = cssGradientThreeColors(
     direction = "right",
-    colorStart = "rgba(44,222,235,1)",
-    colorMiddle = "rgba(44,222,235,1)",
-    colorEnd = "rgba(0,255,213,1)",
-    colorStartPos = 0,
-    colorMiddlePos = 30,
+    colorStart = "rgba(255,255,255,0.8)",
+    colorMiddle = "rgba(255,255,255,0.8)",
+    colorEnd = "rgba(255,255,255,0.8)",
+    colorStartPos = 90,
+    colorMiddlePos = 95,
     colorEndPos = 100
   ),
   sidebarTabTextColorHover = "rgb(50,50,50)",
@@ -121,8 +137,8 @@ Theme <- shinyDashboardThemeDIY(
   # Box
   boxBackColor = cssGradientThreeColors(
     direction = "down",
-    colorStart = "rgba(44,222,235,1)",
-    colorMiddle = "rgba(44,222,235,1)",
+    colorStart = "rgba(65,179,163,1)",
+    colorMiddle = "rgba(65,179,230,0.5)",
     colorEnd = "rgba(255,255,255,1)",
     colorStartPos = 0,
     colorMiddlePos = 10,
@@ -134,13 +150,21 @@ Theme <- shinyDashboardThemeDIY(
   boxTitleSize = 16,
   tabBoxTabColor = "rgb(255,255,255)",
   tabBoxBorderRadius = 5,
-  tabBoxHighlightColor = "rgba(44,222,235,1)",
+  tabBoxHighlightColor = cssGradientThreeColors(
+    direction = "down",
+    colorStart = "rgba(65,179,163,1)",
+    colorMiddle = "rgba(65,179,230,0.5)",
+    colorEnd = "rgba(255,255,255,1)",
+    colorStartPos = 0,
+    colorMiddlePos = 10,
+    colorEndPos = 100
+  ),
   tabBoxTabTextColorSelected = "rgb(0,0,0)",
   tabBoxTabTextSize = 14,
-  tabBoxTabTextColor = "rgb(0,0,0)",
+  tabBoxTabTextColor = "rgb(255,255,255)",
   tabBoxBackColor = "rgb(255,255,255)",
   boxDefaultColor = "rgb(210,214,220)",
-  boxPrimaryColor = "rgba(44,222,235,1)",
+  boxPrimaryColor = "rgba(65,179,230,1)",
   boxSuccessColor = "rgba(0,255,213,1)",
   boxWarningColor = "rgb(244,156,104)",
   boxDangerColor = "rgb(255,88,55)",
@@ -148,7 +172,7 @@ Theme <- shinyDashboardThemeDIY(
   # Input
   textboxBorderRadius = 5,
   buttonBackColor = "rgb(245,245,245)",
-  buttonTextColor = "rgb(0,0,0)",
+  buttonTextColor = "rgb(255,255,255)",
   buttonBorderColor = "rgb(200,200,200)",
   buttonBorderRadius = 5,
   buttonBackColorHover = "rgb(235,235,235)",
@@ -188,21 +212,29 @@ ui <- dashboardPage(
   dashboardBody(
     Theme,
     tags$head(tags$style(".selectize-dropdown {position: static}")),
+    tags$head(tags$style(HTML(".selectize-input {white-space: nowrap} 
+                              #Information+ div>.selectize-input{color: black;}
+                              #Select_country+ div>.selectize-input{color: black;}
+                              #Plot_x-axis+ div>.selectize-input{color: black;}
+                              #Plot_y-axis+ div>.selectize-input{color: black;}"))),
+    tags$style(type = "text/css", ".irs-grid-text {color: black; bottom: 5px; z-index: 1;}"),
     tabItems(
       tabItem(
         "Dashboard", box(leafletOutput(outputId = "COVID Map"), br(),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = "Select variable", status = "primary", selectInput(inputId = "Information", width = "100%", label = NULL, choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests"))),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = "Choose date", status = "primary", sliderInput(inputId = "Time", width = "100%", label = NULL, min = `Manipulated Data`$Date[1], max = `Manipulated Data`$Date[length(`Manipulated Data`$Date)], timeFormat = "%F", value = `Manipulated Data`$Date[1]))),
-          width = 16, solidHeader = TRUE, title = "COVID-19 MAP", title_side = "top left", collapsible = F, status = "primary"
+          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("laptop-code"), "SELECT VARIABLE"), status = "primary", selectInput(inputId = "Information", width = "100%", label = NULL, choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests"))),
+          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("calendar-alt"), "CHOOSE TIME PERIOD"), status = "primary", div(style = "margin: auto; width: 95%", sliderInput(inputId = "Time", width = "100%", label = NULL, min = `Manipulated Data`$Date[1], max = `Manipulated Data`$Date[length(`Manipulated Data`$Date)], timeFormat = "%F", value = `Manipulated Data`$Date[1])))),
+          width = 16, solidHeader = TRUE, title = span(icon("globe"), "COVID-19 MAP"), title_side = "top left", collapsible = F, status = "primary"
         )
       ),
       tabItem(
         "Visual",
         box(plotlyOutput(outputId = "Plots"), br(),
-          width = 16, color = "blue", title = "COVID-19 Graph", title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
-          fluidRow(box(width = 12, solidHeader = TRUE, title = "Select country", status = "primary", selectInput(inputId = "Select country", width = "100%", label = "", choices = unique(`Manipulated Data`$`Administrative area level 1`), selected = "India"))),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = "Select x-axis variable", status = "primary", selectInput(inputId = "Plot x-axis", width = "100%", label = "", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Date"))),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = "Select y-axis variable", status = "primary", selectInput(inputId = "Plot y-axis", width = "100%", label = "", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests")))
+          width = 16, color = "blue", title = span(icon("chart-line"), "COVID-19 GRAPH"), title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
+          fluidRow(
+            column(4, box(width = 12, solidHeader = TRUE, title = span(icon("search-location"), "SELECT COUNTRY"), status = "primary", selectInput(inputId = "Select_country", width = "100%", label = NULL, choices = unique(`Manipulated Data`$`Administrative area level 1`), selected = "India"))),
+            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT X-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_x-axis", width = "100%", label = NULL, choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Date"))),
+            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT Y-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_y-axis", width = "100%", label = NULL, choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests")))
+          )
         )
       )
     )
@@ -217,7 +249,7 @@ server <- function(input, output) {
     colnames(wrld_simpl@data)[ncol(wrld_simpl@data)] <- "map_value"
     Palette <- colorNumeric(palette = "viridis", domain = wrld_simpl@data$map_value, na.color = "transparent")
     wrld_simpl@data$label <- with(wrld_simpl@data, paste("<p> <b>", NAME, "</b> </br>", input$Time, "</br>", input$Information, ":", map_value, "</p>"))
-    wrld_simpl@data$string <- paste(as.character.factor(wrld_simpl@data$NAME),rep("(Click for more)",times=nrow(wrld_simpl@data)))
+    wrld_simpl@data$string <- paste(as.character.factor(wrld_simpl@data$NAME), rep("(Click for more)", times = nrow(wrld_simpl@data)))
     leaflet(wrld_simpl, options = leafletOptions(minZoom = 2)) %>%
       setView(lng = 78, lat = 20, zoom = 2) %>%
       addTiles() %>%
@@ -226,15 +258,23 @@ server <- function(input, output) {
       addPolygons(fillColor = ~ Palette(map_value), stroke = F, popup = ~label, label = ~string, highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE))
   })
   output$Plots <- renderPlotly({
-    canvas <- ggplot(droplevels(`Manipulated Data`[which(`Manipulated Data`$`Administrative area level 1` == input$`Select country`), ]), aes(x = eval(parse(text = paste0("`", input$`Plot x-axis`, "`"))), y = eval(parse(text = paste0("`", input$`Plot y-axis`, "`"))))) +
+    canvas <- ggplot(droplevels(`Manipulated Data`[which(`Manipulated Data`$`Administrative area level 1` == input$`Select_country`), ]), aes(x = eval(parse(text = paste0("`", input$`Plot_x-axis`, "`"))), y = eval(parse(text = paste0("`", input$`Plot_y-axis`, "`"))))) +
       coord_cartesian()
-    plot <- canvas + suppressWarnings(geom_point(aes(
+    `select colors` <- function(n) {
+      hues <- seq(15, 375, length = n + 1)
+      hcl(h = hues, l = 65, c = 100)[1:n]
+    }
+    colors <- `select colors`(length(unique(`Manipulated Data`$Id)))
+    plot <- canvas + suppressWarnings(geom_line(aes(
+      group = 1,
       text = paste(
-        input$`Plot x-axis`, ":", eval(parse(text = paste0("`", input$`Plot x-axis`, "`"))), "\n",
-        input$`Plot y-axis`, ":", eval(parse(text = paste0("`", input$`Plot y-axis`, "`")))
-      ), color = input$`Select country`
-    ))) +
-      labs(x = input$`Plot x-axis`, y = input$`Plot y-axis`) +
+        input$`Plot_x-axis`, ":", eval(parse(text = paste0("`", input$`Plot_x-axis`, "`"))), "\n",
+        input$`Plot_y-axis`, ":", eval(parse(text = paste0("`", input$`Plot_y-axis`, "`")))
+      )
+    ),
+    colour = colors[which(unique(`Manipulated Data`$`Administrative area level 1`) == input$`Select_country`)]
+    )) +
+      labs(x = input$`Plot_x-axis`, y = input$`Plot_y-axis`) +
       theme_bw() +
       theme(legend.position = "none", panel.border = element_blank())
     ggplotly(plot, tooltip = "text")
