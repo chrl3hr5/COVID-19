@@ -167,7 +167,7 @@ Theme <- shinyDashboardThemeDIY(
 )
 
 Logo <- shinyDashboardLogoDIY(
-  boldText = "COVID19",
+  boldText = "COVID-19",
   mainText = "Tracker",
   textSize = 16,
   badgeText = "",
@@ -198,11 +198,11 @@ ui <- dashboardPage(
       ),
       tabItem(
         "Visual",
-        box(plotlyOutput(outputId = "Plots"),
+        box(plotlyOutput(outputId = "Plots"), br(),
           width = 16, color = "blue", title = "COVID-19 Graph", title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
-          selectInput(inputId = "Select country", width = "100%", label = "Select country", choices = unique(`Manipulated Data`$`Administrative area level 1`), selected = "India"),
-          selectInput(inputId = "Plot x-axis", width = "100%", label = "Select x-axis variable", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Date"),
-          selectInput(inputId = "Plot y-axis", width = "100%", label = "Select y-axis variable", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests")
+          fluidRow(box(width = 12, solidHeader = TRUE, title = "Select country", status = "primary", selectInput(inputId = "Select country", width = "100%", label = "", choices = unique(`Manipulated Data`$`Administrative area level 1`), selected = "India"))),
+          fluidRow(box(width = 12, solidHeader = TRUE, title = "Select x-axis variable", status = "primary", selectInput(inputId = "Plot x-axis", width = "100%", label = "", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Date"))),
+          fluidRow(box(width = 12, solidHeader = TRUE, title = "Select y-axis variable", status = "primary", selectInput(inputId = "Plot y-axis", width = "100%", label = "", choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests")))
         )
       )
     )
