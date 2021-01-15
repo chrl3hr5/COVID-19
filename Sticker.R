@@ -1,0 +1,2 @@
+library(hexSticker)
+Sticker <- sticker("figures/COVID-19.png", package = "COVID-19 Tracker", p_fontface = "bold", h_color = "white", h_fill = "grey", p_family = "sans", p_color = "black", p_size = 13, s_x = 0.95, s_y = .725, s_width = 0.8, s_height = 0.8, filename = "Sticker.png")
