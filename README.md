@@ -1,5 +1,5 @@
 
-# COVID-19 Tracker <img src="figures/Sticker.png" align="right" width="120" />
+# [COVID-19 Tracker](https://aidigvijay.shinyapps.io/COVID-19_Tracker/) <img src="figures/Sticker.png" align="right" width="120" />
 
 A shiny web application for tracking the spread of COVID-19 globally.
 
