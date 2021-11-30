@@ -1,54 +1,11 @@
 # Loading libraries
-library(tidyverse) # For data analysis
-library(plotly) # For data visualization
-library(skimr) # For data summary
-library(COVID19) # For COVID-19 data
-library(shiny) # For R Shiny
-library(shinydashboard) # For Shiny dashboard
-library(leaflet) # For maps
-library(styler) # For formatting R code
-library(waiter) # For loading screens
-library(dashboardthemes) # For adding themes
-library(maptools) # For shape files
+source("external/load_libraries.R")
 
 # Loading data
-data(wrld_simpl) # World polygons
-Data <- covid19() # Worldwide COVID-19 data by country
-colnames(Data) <- gsub("_", " ", str_to_title(colnames(Data))) # Reformatting column names
+source("external/load_data.R")
 
 # Manipulating data
-# COVID-19 data
-`Cumulative to Individual` <- function(x) {
-  if (length(x) > 1) {
-    abs(x[2:length(x)] - x[1:(length(x) - 1)])
-  } else {
-    cat("Vector length not sufficient!\n")
-  }
-}
-`Manipulated Data` <- rbind(Data[1, c(3:9, 11:21)], apply(Data[, c(3:9, 11:21)], 2, `Cumulative to Individual`))
-`Manipulated Data` <- cbind(Data[, c(1:2)], `Manipulated Data`, Data[, c(10, 22:36)])
-for (i in 1:length(unique(`Manipulated Data`$Id)))
-{
-  `Manipulated Data`[head(which(`Manipulated Data`$Id == unique(`Manipulated Data`$Id)[i]), 1), ] <- Data[head(which(`Manipulated Data`$Id == unique(`Manipulated Data`$Id)[i]), 1), ]
-}
-
-# Polygon data
-Positions <- as.data.frame(cbind(rep(unique(`Manipulated Data`$Id), times = length(wrld_simpl@data$ISO3)), rep(as.character.factor(wrld_simpl@data$ISO3), each = length(unique(`Manipulated Data`$Id)))))
-Unique <- length(unique(Positions$V1))
-Locations <- NULL
-for (i in 1:(nrow(Positions) / Unique))
-{
-  Locations[i] <- if (length(which(unname(apply(Positions[1:Unique, ], 1, function(t) {
-    length(unique(t)) == 1
-  })))) == 1) {
-    which(unname(apply(Positions[1:Unique, ], 1, function(t) {
-      length(unique(t)) == 1
-    })))
-  } else {
-    NA
-  }
-  Positions <- tail(Positions, -Unique)
-}
+source("external/data_manipulation.R")
 
 # User Interface
 Theme <- shinyDashboardThemeDIY(
