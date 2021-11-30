@@ -6,7 +6,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# [COVID-19 Tracker](https://aidigvijay.shinyapps.io/COVID-19_Tracker/) <img src="figures/Sticker.png" align="right" width="120" />
+# [COVID-19 Tracker](https://chrl3hr5.shinyapps.io/COVID-19_Tracker/) <img src="sticker/sticker.png" align="right" width="120" />
 
 A shiny web application for tracking the spread of COVID-19 globally.
 
