@@ -10,10 +10,13 @@
 }
 `Manipulated Data` <- rbind(Data[1, c(3:9, 11:21)], apply(Data[, c(3:9, 11:21)], 2, `Cumulative to Individual`))
 `Manipulated Data` <- cbind(Data[, c(1:2)], `Manipulated Data`, Data[, c(10, 22:ncol(Data))])
-for (i in 1:length(unique(`Manipulated Data`$Id)))
-{
-  `Manipulated Data`[head(which(`Manipulated Data`$Id == unique(`Manipulated Data`$Id)[i]), 1), ] <- Data[head(which(`Manipulated Data`$Id == unique(`Manipulated Data`$Id)[i]), 1), ]
-}
+Data <- cbind(1:nrow(Data),Data)
+colnames(Data)[1] <- "index"
+grouped_data <- Data %>% group_split(Id)
+replace_values <- lapply(grouped_data,function(x){head(x,1)})
+replace_values <- do.call(rbind,replace_values)
+replace_values <- replace_values[order(replace_values$index),]
+`Manipulated Data`[replace_values$index,] <- Data[replace_values$index]
 
 # Polygon data
 Positions <- as.data.frame(cbind(rep(unique(`Manipulated Data`$Id), times = length(wrld_simpl@data$ISO3)), rep(as.character.factor(wrld_simpl@data$ISO3), each = length(unique(`Manipulated Data`$Id)))))
