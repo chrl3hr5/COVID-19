@@ -16,11 +16,13 @@ grouped_data <- Data %>% group_split(Id)
 replace_values <- lapply(grouped_data,function(x){head(x,1)})
 replace_values <- do.call(rbind,replace_values)
 replace_values <- replace_values[order(replace_values$index),]
-`Manipulated Data`[replace_values$index,] <- Data[replace_values$index]
+`Manipulated Data`[replace_values$index,] <- Data[replace_values$index,-1]
+rm(grouped_data,replace_values,`Cumulative to Individual`)
 
 # Polygon data
 Positions <- as.data.frame(cbind(rep(unique(`Manipulated Data`$Id), times = length(wrld_simpl@data$ISO3)), rep(as.character.factor(wrld_simpl@data$ISO3), each = length(unique(`Manipulated Data`$Id)))))
-Unique <- length(unique(Positions$V1))
+colnames(Positions) <- c("Id","ISO3")
+Unique <- length(unique(Positions$Id))
 Locations <- NULL
 for (i in 1:(nrow(Positions) / Unique))
 {
