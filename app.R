@@ -1,11 +1,8 @@
 # Loading libraries
-source("external/load_libraries.R")
+source("external/libraries.R")
 
-# Loading data
-source("external/load_data.R")
-
-# Manipulating data
-source("external/data_manipulation.R")
+# Loading and manipulating data
+source("external/data.R")
 
 # User Interface
 source("external/ui_theme.R")
