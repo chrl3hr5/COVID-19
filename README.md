@@ -17,6 +17,8 @@ time or against each other.
 
 <img src="figures/Visualization.png" align="center" />
 
-<b> Data Source </b> - \[COVID-19 Data Hub\]
-(<https://github.com/covid19datahub/COVID19>) <b> Map Source </b> -
-\[geoBoundaries\] (<https://github.com/wmgeolab/geoBoundaries>)
+<b> Data Source </b> - [COVID-19 Data
+Hub](https://github.com/covid19datahub/COVID19)
+
+<b> Map Source </b> -
+[geoBoundaries](https://github.com/wmgeolab/geoBoundaries)
