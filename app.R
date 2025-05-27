@@ -23,6 +23,8 @@ ui <- dashboardPage(
     Theme,
     tags$head(tags$style(".selectize-dropdown {position: static}")),
     tags$head(tags$style(HTML(".selectize-input {white-space: nowrap}
+                              .selectize-dropdown .selectize-dropdown-content .option {color: black}
+                              .selectize-dropdown-content {max-height: 90px;overflow-y: auto;}
                               body {font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;}
                               #information+ div>.selectize-input{color: black;}
                               #select_country+ div>.selectize-input{color: black;}
@@ -32,7 +34,7 @@ ui <- dashboardPage(
     tabItems(
       tabItem(
         "Dashboard", box(withSpinner(leafletOutput(outputId = "map")), br(),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("laptop-code"), "SELECT VARIABLE", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectInput(inputId = "information", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Date", "Administrative Area Level 1")], selected = "Confirmed"))),
+          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("laptop-code"), "SELECT VARIABLE", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectizeInput(inputId = "information", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Date", "Administrative Area Level 1")], selected = "Confirmed"))),
           fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("calendar-alt"), "CHOOSE TIME PERIOD", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", div(style = "margin: auto; width: 95%", sliderInput(inputId = "time", width = "100%", label = NULL, min = manipulated_data$Date[1], max = manipulated_data$Date[length(manipulated_data$Date)], timeFormat = "%F", value = manipulated_data$Date[1])))),
           width = 16, solidHeader = TRUE, title = span(icon("globe"), "COVID-19 MAP", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), title_side = "top left", collapsible = F, status = "primary"
         )
@@ -40,11 +42,11 @@ ui <- dashboardPage(
       tabItem(
         "Visual",
         box(withSpinner(plotlyOutput(outputId = "Plots", height = "325px")), br(),
-          width = 16, color = "blue", title = span(icon("chart-line"), "COVID-19 GRAPH"), title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
+          width = 16, color = "blue", title = span(icon("chart-line"), "COVID-19 GRAPH", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
           fluidRow(
-            column(4, box(width = 12, solidHeader = TRUE, title = span(icon("flag"), "SELECT COUNTRY", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectInput(inputId = "select_country", width = "100%", label = NULL, choices = unique(manipulated_data$`Administrative Area Level 1`), selected = "India"))),
-            column(4, box(width = 12, solidHeader = TRUE, title = span("SELECT X-AXIS VARIABLE", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectInput(inputId = "plot_x_axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Administrative Area Level 1")], selected = "Date"))),
-            column(4, box(width = 12, solidHeader = TRUE, title = span("SELECT Y-AXIS VARIABLE", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectInput(inputId = "plot_y_axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Date", "Administrative Area Level 1")], selected = "Confirmed")))
+            column(4, box(width = 12, solidHeader = TRUE, title = span(icon("flag"), "SELECT COUNTRY", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectizeInput(inputId = "select_country", width = "100%", label = NULL, choices = unique(manipulated_data$`Administrative Area Level 1`), selected = "India"))),
+            column(4, box(width = 12, solidHeader = TRUE, title = span("SELECT X-AXIS VARIABLE", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectizeInput(inputId = "plot_x_axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Administrative Area Level 1")], selected = "Date"))),
+            column(4, box(width = 12, solidHeader = TRUE, title = span("SELECT Y-AXIS VARIABLE", style = "font-weight: bold; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;"), status = "primary", selectizeInput(inputId = "plot_y_axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Date", "Administrative Area Level 1")], selected = "Confirmed")))
           )
         )
       )
