@@ -94,6 +94,7 @@ server <- function(input, output) {
         )
       ),
       alpha = 0.75,
+      color = "#192191"
       )) +
       labs(x = input$plot_x_axis, y = input$plot_y_axis) +
       theme_bw() +
