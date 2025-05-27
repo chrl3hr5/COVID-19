@@ -81,11 +81,6 @@ server <- function(input, output) {
   output$Plots <- renderPlotly({
     canvas <- ggplot(droplevels(manipulated_data[which(manipulated_data$`Administrative Area Level 1` == input$select_country), ]), aes(x = eval(parse(text = paste0("`", input$plot_x_axis, "`"))), y = eval(parse(text = paste0("`", input$plot_y_axis, "`"))))) +
       coord_cartesian()
-    `select colors` <- function(n) {
-      hues <- seq(15, 375, length = n + 1)
-      hcl(h = hues, l = 65, c = 100)[1:n]
-    }
-    colors <- `select colors`(length(unique(manipulated_data$Id)))
     plot <- canvas + geom_line(lwd = 0.25) +
       suppressWarnings(geom_line(aes(
         group = 1,
@@ -95,7 +90,6 @@ server <- function(input, output) {
         )
       ),
       alpha = 0.75,
-      colour = colors[which(unique(manipulated_data$`Administrative Area Level 1`) == input$select_country)]
       )) +
       labs(x = input$plot_x_axis, y = input$plot_y_axis) +
       theme_bw() +
