@@ -1,4 +1,4 @@
-Theme <- shinyDashboardThemeDIY(
+dashboardTheme <- shinyDashboardThemeDIY(
   # General
   appFontFamily = "Maven Pro",
   appFontColor = "rgb(255,255,255)",
