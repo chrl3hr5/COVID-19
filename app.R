@@ -2,11 +2,15 @@
 source("external/libraries.R")
 
 # Loading and manipulating data
-source("external/data.R")
+source("data/data.R")
 
 # User Interface
-source("external/ui_theme.R")
+source("external/theme.R")
 
+# Setting loading spinner parameters
+options(spinner.type = 5, spinner.color = "#0dc5c1")
+
+# UI
 ui <- dashboardPage(
   dashboardHeader(title = span(icon("head-side-mask", "fa-1x"), span("COVID-19", style = "font-size: 17px; font-weight: bold;", span("Tracker", style = "font-size: 17px; font-weight: normal;")))),
   dashboardSidebar(
@@ -26,9 +30,9 @@ ui <- dashboardPage(
     tags$style(type = "text/css", ".irs-grid-text {color: black; bottom: 5px; z-index: 1;}"),
     tabItems(
       tabItem(
-        "Dashboard", box(leafletOutput(outputId = "COVID Map"), br(),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("laptop-code"), "SELECT VARIABLE"), status = "primary", selectInput(inputId = "Information", width = "100%", label = NULL, choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Iso numeric", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests"))),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("calendar-alt"), "CHOOSE TIME PERIOD"), status = "primary", div(style = "margin: auto; width: 95%", sliderInput(inputId = "Time", width = "100%", label = NULL, min = `Manipulated Data`$Date[1], max = `Manipulated Data`$Date[length(`Manipulated Data`$Date)], timeFormat = "%F", value = `Manipulated Data`$Date[1])))),
+        "Dashboard", box(withSpinner(leafletOutput(outputId = "map")), br(),
+          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("laptop-code"), "SELECT VARIABLE"), status = "primary", selectInput(inputId = "information", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("id", "date", "iso_alpha_3", "iso_alpha_2", "iso_numeric", "administrative_area_level", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "latitude", "longitude", "key_apple_mobility", "key_google_mobility")], selected = "tests"))),
+          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("calendar-alt"), "CHOOSE TIME PERIOD"), status = "primary", div(style = "margin: auto; width: 95%", sliderInput(inputId = "time", width = "100%", label = NULL, min = manipulated_data$date[1], max = manipulated_data$date[length(manipulated_data$date)], timeFormat = "%F", value = manipulated_data$date[1])))),
           width = 16, solidHeader = TRUE, title = span(icon("globe"), "COVID-19 MAP"), title_side = "top left", collapsible = F, status = "primary"
         )
       ),
@@ -37,9 +41,9 @@ ui <- dashboardPage(
         box(plotlyOutput(outputId = "Plots", height = "325px"), br(),
           width = 16, color = "blue", title = span(icon("chart-line"), "COVID-19 GRAPH"), title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
           fluidRow(
-            column(4, box(width = 12, solidHeader = TRUE, title = span(icon("flag"), "SELECT COUNTRY"), status = "primary", selectInput(inputId = "Select_country", width = "100%", label = NULL, choices = unique(`Manipulated Data`$`Administrative area level 1`), selected = "India"))),
-            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT X-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_x-axis", width = "100%", label = NULL, choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Date"))),
-            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT Y-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_y-axis", width = "100%", label = NULL, choices = colnames(`Manipulated Data`)[!colnames(`Manipulated Data`) %in% c("Id", "Date", "Iso alpha 3", "Iso alpha 2", "Currency", "Administrative area level", "Administrative area level 1", "Administrative area level 2", "Administrative area level 3", "Latitude", "Longitude", "Key", "Key apple mobility", "Key google mobility")], selected = "Tests")))
+            column(4, box(width = 12, solidHeader = TRUE, title = span(icon("flag"), "SELECT COUNTRY"), status = "primary", selectInput(inputId = "select_country", width = "100%", label = NULL, choices = unique(manipulated_data$administrative_area_level_1), selected = "India"))),
+            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT X-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_x-axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("id", "iso_alpha_3", "iso_alpha_2", "administrative_area_level", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "latitude", "longitude", "key_apple_mobility", "key_google_mobility")], selected = "date"))),
+            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT Y-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_y-axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("id", "date", "iso_alpha_3", "iso_alpha_2", "Currency", "administrative_area_level", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "latitude", "longitude", "key_apple_mobility", "key_google_mobility")], selected = "tests")))
           )
         )
       )
@@ -49,28 +53,38 @@ ui <- dashboardPage(
 
 # Server
 server <- function(input, output) {
-  output$`COVID Map` <- renderLeaflet({
-    `Map Data` <- filter(`Manipulated Data`, Date == input$Time)[, c(input$Information)]
-    wrld_simpl@data <- cbind(wrld_simpl@data, as.vector(as.matrix(`Map Data`))[Locations])
-    colnames(wrld_simpl@data)[ncol(wrld_simpl@data)] <- "map_value"
-    Palette <- colorNumeric(palette = "viridis", domain = wrld_simpl@data$map_value, na.color = "transparent")
-    wrld_simpl@data$label <- with(wrld_simpl@data, paste("<p> <b>", NAME, "</b> </br>", input$Time, "</br>", input$Information, ":", map_value, "</p>"))
-    wrld_simpl@data$string <- paste(as.character.factor(wrld_simpl@data$NAME), rep("(Click for more)", times = nrow(wrld_simpl@data)))
-    leaflet(wrld_simpl, options = leafletOptions(minZoom = 2)) %>%
+  # Obtaining data to display on map based on the selected variable and time period
+  map_data <- reactive({req(input$time, input$information)
+    manipulated_data %>% filter(date == input$time) %>% mutate(
+      map_value = as.numeric(.data[[input$information]]),
+      shapeName = administrative_area_level_1, .keep = "none")
+  })
+  # Merging the obtained data with polygon data
+  map_data_merged <- reactive({
+    req(map_data())
+    left_join(polygons, map_data(), by = "shapeName")
+  })
+  # Creating palette based on country values for the selected variable
+  palette <- reactive({req(map_data_merged())
+    colorNumeric(palette = "viridis",domain = map_data_merged()$map_value,na.color = "#555555")
+  })
+  # Rendering map
+  output$map <- renderLeaflet({
+    leaflet(map_data_merged(), options = leafletOptions(minZoom = 2)) %>%
       setView(lng = 78, lat = 20, zoom = 2) %>%
-      addTiles() %>%
+      addTiles(urlTemplate = "") %>%
       setMaxBounds(lng1 = 180, lat1 = 84, lng2 = -140, lat2 = -84) %>%
-      addProviderTiles("CartoDB.VoyagerLabelsUnder") %>%
-      addPolygons(fillColor = ~ Palette(map_value), stroke = F, popup = ~label, label = ~string, highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE))
+      #addProviderTiles("Stamen.TonerLite") %>% 
+      addPolygons(fillColor = ~ palette()(map_value), stroke = F, popup = ~shapeName, label = ~paste0(shapeName, ': ', ifelse(is.na(map_value), "No data", map_value)), highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE))
   })
   output$Plots <- renderPlotly({
-    canvas <- ggplot(droplevels(`Manipulated Data`[which(`Manipulated Data`$`Administrative area level 1` == input$`Select_country`), ]), aes(x = eval(parse(text = paste0("`", input$`Plot_x-axis`, "`"))), y = eval(parse(text = paste0("`", input$`Plot_y-axis`, "`"))))) +
+    canvas <- ggplot(droplevels(manipulated_data[which(manipulated_data$administrative_area_level_1 == input$select_country), ]), aes(x = eval(parse(text = paste0("`", input$`Plot_x-axis`, "`"))), y = eval(parse(text = paste0("`", input$`Plot_y-axis`, "`"))))) +
       coord_cartesian()
     `select colors` <- function(n) {
       hues <- seq(15, 375, length = n + 1)
       hcl(h = hues, l = 65, c = 100)[1:n]
     }
-    colors <- `select colors`(length(unique(`Manipulated Data`$Id)))
+    colors <- `select colors`(length(unique(manipulated_data$Id)))
     plot <- canvas + geom_line(lwd = 0.25) +
       suppressWarnings(geom_line(aes(
         group = 1,
@@ -80,7 +94,7 @@ server <- function(input, output) {
         )
       ),
       alpha = 0.75,
-      colour = colors[which(unique(`Manipulated Data`$`Administrative area level 1`) == input$`Select_country`)]
+      colour = colors[which(unique(manipulated_data$administrative_area_level_1) == input$select_country)]
       )) +
       labs(x = input$`Plot_x-axis`, y = input$`Plot_y-axis`) +
       theme_bw() +
