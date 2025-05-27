@@ -1,11 +1,14 @@
 # Loading libraries
-library(tidyverse) # For data analysis
-library(plotly) # For data visualization
+library(tidyverse) # To perform data analysis
+library(plotly) # To create data visualization
 library(skimr) # For data summary
-library(COVID19) # For COVID-19 data
-library(shiny) # For R Shiny
-library(shinydashboard) # For Shiny dashboard
-library(leaflet) # For maps
-library(styler) # For formatting R code
-library(dashboardthemes) # For adding themes
-library(maptools) # For shape files
+library(COVID19) # To obtain COVID-19 data
+library(shiny) # For creating shiny application
+library(shinydashboard) # For creating shiny dashboard
+library(leaflet) # To create maps
+library(styler) # To format the R code
+library(dashboardthemes) # To add themes
+library(httr) # To use API
+library(jsonlite) # To read JSON data
+library(sf) # To read geospatial data
+library(shinycssloaders) # To add loading animation
