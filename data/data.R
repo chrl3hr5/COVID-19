@@ -1,5 +1,5 @@
 # Check for the presence of polygon data file and extract data from web if file is unavailable
-if(file.exists('data/polygons.rds')) {
+if(file.exists('data/simplified_polygons.rds')) {
   polygons <- readRDS('data/polygons.rds')
 } else {
   # API to obtain up-to-date boundaries (Source: https://github.com/wmgeolab/geoBoundaries)
@@ -19,6 +19,16 @@ if(file.exists('data/polygons.rds')) {
   
   # Saving data
   saveRDS(polygons,'data/polygons.rds')
+  
+  # Simplifying polygon data
+  sf_use_s2(FALSE)
+  polygons_valid <- st_make_valid(polygons)
+  polygons_projected <- st_transform(polygons_valid, crs = 3857)
+  simplified_projected <- st_simplify(polygons_projected, dTolerance = 1000, preserveTopology = TRUE)
+  simplified_sf <- st_transform(simplified_projected, crs = st_crs(polygons))
+  
+  # Saving data
+  saveRDS(simplified_sf,'data/simplified_polygons.rds')
 }
 
 # Getting COVID-19 data
