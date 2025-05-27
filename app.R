@@ -23,15 +23,15 @@ ui <- dashboardPage(
     Theme,
     tags$head(tags$style(".selectize-dropdown {position: static}")),
     tags$head(tags$style(HTML(".selectize-input {white-space: nowrap} 
-                              #Information+ div>.selectize-input{color: black;}
-                              #Select_country+ div>.selectize-input{color: black;}
-                              #Plot_x-axis+ div>.selectize-input{color: black;}
+                              #information+ div>.selectize-input{color: black;}
+                              #select_country+ div>.selectize-input{color: black;}
+                              #plot_x_axis+ div>.selectize-input{color: black;}
                               #Plot_y-axis+ div>.selectize-input{color: black;}"))),
     tags$style(type = "text/css", ".irs-grid-text {color: black; bottom: 5px; z-index: 1;}"),
     tabItems(
       tabItem(
         "Dashboard", box(withSpinner(leafletOutput(outputId = "map")), br(),
-          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("laptop-code"), "SELECT VARIABLE"), status = "primary", selectInput(inputId = "information", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("id", "date", "iso_alpha_3", "iso_alpha_2", "iso_numeric", "administrative_area_level", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "latitude", "longitude", "key_apple_mobility", "key_google_mobility")], selected = "tests"))),
+          fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("laptop-code"), "SELECT VARIABLE"), status = "primary", selectInput(inputId = "information", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Date", "Administrative area level 1")], selected = "Tests"))),
           fluidRow(box(width = 12, solidHeader = TRUE, title = span(icon("calendar-alt"), "CHOOSE TIME PERIOD"), status = "primary", div(style = "margin: auto; width: 95%", sliderInput(inputId = "time", width = "100%", label = NULL, min = manipulated_data$date[1], max = manipulated_data$date[length(manipulated_data$date)], timeFormat = "%F", value = manipulated_data$date[1])))),
           width = 16, solidHeader = TRUE, title = span(icon("globe"), "COVID-19 MAP"), title_side = "top left", collapsible = F, status = "primary"
         )
@@ -42,8 +42,8 @@ ui <- dashboardPage(
           width = 16, color = "blue", title = span(icon("chart-line"), "COVID-19 GRAPH"), title_side = "top left", collapsible = F, status = "primary", solidHeader = T,
           fluidRow(
             column(4, box(width = 12, solidHeader = TRUE, title = span(icon("flag"), "SELECT COUNTRY"), status = "primary", selectInput(inputId = "select_country", width = "100%", label = NULL, choices = unique(manipulated_data$administrative_area_level_1), selected = "India"))),
-            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT X-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_x-axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("id", "iso_alpha_3", "iso_alpha_2", "administrative_area_level", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "latitude", "longitude", "key_apple_mobility", "key_google_mobility")], selected = "date"))),
-            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT Y-AXIS VARIABLE", status = "primary", selectInput(inputId = "Plot_y-axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("id", "date", "iso_alpha_3", "iso_alpha_2", "Currency", "administrative_area_level", "administrative_area_level_1", "administrative_area_level_2", "administrative_area_level_3", "latitude", "longitude", "key_apple_mobility", "key_google_mobility")], selected = "tests")))
+            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT X-AXIS VARIABLE", status = "primary", selectInput(inputId = "plot_x_axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Administrative area level 1")], selected = "Date"))),
+            column(4, box(width = 12, solidHeader = TRUE, title = "SELECT Y-AXIS VARIABLE", status = "primary", selectInput(inputId = "plot_y_axis", width = "100%", label = NULL, choices = colnames(manipulated_data)[!colnames(manipulated_data) %in% c("Id", "Date", "Administrative area level 1")], selected = "Tests")))
           )
         )
       )
@@ -78,7 +78,7 @@ server <- function(input, output) {
       addPolygons(fillColor = ~ palette()(map_value), stroke = F, popup = ~shapeName, label = ~paste0(shapeName, ': ', ifelse(is.na(map_value), "No data", map_value)), highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE))
   })
   output$Plots <- renderPlotly({
-    canvas <- ggplot(droplevels(manipulated_data[which(manipulated_data$administrative_area_level_1 == input$select_country), ]), aes(x = eval(parse(text = paste0("`", input$`Plot_x-axis`, "`"))), y = eval(parse(text = paste0("`", input$`Plot_y-axis`, "`"))))) +
+    canvas <- ggplot(droplevels(manipulated_data[which(manipulated_data$administrative_area_level_1 == input$select_country), ]), aes(x = eval(parse(text = paste0("`", input$plot_x_axis, "`"))), y = eval(parse(text = paste0("`", input$plot_y_axis, "`"))))) +
       coord_cartesian()
     `select colors` <- function(n) {
       hues <- seq(15, 375, length = n + 1)
@@ -89,14 +89,14 @@ server <- function(input, output) {
       suppressWarnings(geom_line(aes(
         group = 1,
         text = paste(
-          input$`Plot_x-axis`, ":", eval(parse(text = paste0("`", input$`Plot_x-axis`, "`"))), "\n",
-          input$`Plot_y-axis`, ":", eval(parse(text = paste0("`", input$`Plot_y-axis`, "`")))
+          input$plot_x_axis, ":", eval(parse(text = paste0("`", input$plot_x_axis, "`"))), "\n",
+          input$plot_y_axis, ":", eval(parse(text = paste0("`", input$plot_y_axis, "`")))
         )
       ),
       alpha = 0.75,
       colour = colors[which(unique(manipulated_data$administrative_area_level_1) == input$select_country)]
       )) +
-      labs(x = input$`Plot_x-axis`, y = input$`Plot_y-axis`) +
+      labs(x = input$plot_x_axis, y = input$plot_y_axis) +
       theme_bw() +
       theme(legend.position = "none", panel.border = element_blank(), rect = element_rect(fill = "transparent"))
     ggplotly(plot, tooltip = "text") %>% layout(plot_bgcolor = "rgba(0,0,0,0)", paper_bgcolor = "rgba(0,0,0,0)")
