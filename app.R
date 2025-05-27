@@ -8,7 +8,7 @@ source("data/data.R")
 source("external/theme.R")
 
 # Setting loading spinner parameters
-options(spinner.type = 5, spinner.color = "#0dc5c1")
+options(spinner.type = 6, spinner.color = "#0dc5c1", spinner.size = 0.5)
 
 # UI
 ui <- dashboardPage(
@@ -69,17 +69,32 @@ server <- function(input, output) {
     req(map_data())
     left_join(polygons, map_data(), by = "shapeName")
   })
+  # Adding text to show as label
+  map_data_with_label <- reactive({
+    req(map_data_merged())
+    map_data_with_label <- map_data_merged()
+    map_data_with_label$label <- paste0('<center> <p> <b>', map_data_with_label$shapeName, '</b> </br> (Click for info) </p> </center>')
+    map_data_with_label
+  })
+  # Adding text to show as popup message
+  map_data_with_popup <- reactive({
+    req(map_data_with_label())
+    map_data_with_popup <- map_data_with_label()
+    map_data_with_popup$popup <- paste0('<p> <b>', map_data_with_popup$shapeName, '</b>', '</br> <b> Date: </b>', input$time, '</br> <b>', input$information, ': </b>', ifelse(is.na(map_data_with_popup$map_value), "No data", map_data_with_popup$map_value),'</p>')
+    map_data_with_popup
+  })
   # Creating palette based on country values for the selected variable
-  palette <- reactive({req(map_data_merged())
-    colorNumeric(palette = "viridis",domain = map_data_merged()$map_value,na.color = "#555555")
+  palette <- reactive({req(map_data_with_popup())
+    colorNumeric(palette = "viridis", domain = map_data_with_popup()$map_value, na.color = "#555555")
   })
   # Rendering map
   output$map <- renderLeaflet({
-    leaflet(map_data_merged(), options = leafletOptions(minZoom = 2)) %>%
+    leaflet(map_data_with_popup(), options = leafletOptions(minZoom = 2)) %>%
       setView(lng = 78, lat = 20, zoom = 2) %>%
       addTiles(urlTemplate = "") %>%
       setMaxBounds(lng1 = 180, lat1 = 84, lng2 = -140, lat2 = -84) %>%
-      addPolygons(fillColor = ~ palette()(map_value), stroke = F, popup = ~shapeName, label = ~paste0(shapeName, ': ', ifelse(is.na(map_value), "No data", map_value)), highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE)) %>%
+      addPolygons(fillColor = ~ palette()(map_value), stroke = F, popup = lapply(map_data_with_popup()$popup, HTML), label = lapply(map_data_with_popup()$label, HTML),
+                  highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE)) %>%
       addLegend("topright", pal = palette(), values = ~map_value, title = "Value", opacity = 1)
   })
   output$Plots <- renderPlotly({
@@ -88,13 +103,13 @@ server <- function(input, output) {
     plot <- canvas + geom_line(lwd = 0.25) +
       suppressWarnings(geom_line(aes(
         group = 1,
-        text = paste(
-          input$plot_x_axis, ":", eval(parse(text = paste0("`", input$plot_x_axis, "`"))), "\n",
-          input$plot_y_axis, ":", eval(parse(text = paste0("`", input$plot_y_axis, "`")))
+        text = paste0(
+          '<b>', input$plot_x_axis, ": </b>", eval(parse(text = paste0("`", input$plot_x_axis, "`"))), "\n",
+          '<b>', input$plot_y_axis, ": </b>", eval(parse(text = paste0("`", input$plot_y_axis, "`")))
         )
       ),
       alpha = 0.75,
-      color = "#192191"
+      color = "#0096FF"
       )) +
       labs(x = input$plot_x_axis, y = input$plot_y_axis) +
       theme_bw() +
