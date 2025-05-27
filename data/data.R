@@ -44,6 +44,7 @@ replace_values <- do.call(rbind,replace_values)
 replace_values <- replace_values[order(replace_values$index),]
 manipulated_data[replace_values$index,] <- data[replace_values$index,-1]
 manipulated_data <- manipulated_data %>% select(colnames(manipulated_data)[c(1:11,32)])
-
+colnames(manipulated_data) <- str_to_title(gsub("_", " ", colnames(manipulated_data)))
+  
 # Removing objects that are not required
 rm(data,grouped_data,replace_values,cumulative_to_individual)
