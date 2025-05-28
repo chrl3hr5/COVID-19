@@ -1,6 +1,6 @@
 # Check for the presence of polygon data file and extract data from web if file is unavailable
 if(file.exists('data/simplified_polygons.rds')) {
-  polygons <- readRDS('data/polygons.rds')
+  polygons <- readRDS('data/simplified_polygons.rds')
 } else {
   # API to obtain up-to-date boundaries (Source: https://github.com/wmgeolab/geoBoundaries)
   url <- "https://api.github.com/repos/wmgeolab/geoBoundaries/contents/sourceData/gbOpen"
