@@ -17,9 +17,6 @@ if(file.exists('data/simplified_polygons.rds')) {
     Sys.sleep(2) # 2 seconds delay between requests
   }
   
-  # Saving data
-  saveRDS(polygons,'data/polygons.rds')
-  
   # Simplifying polygon data
   sf_use_s2(FALSE)
   polygons_valid <- st_make_valid(polygons)
