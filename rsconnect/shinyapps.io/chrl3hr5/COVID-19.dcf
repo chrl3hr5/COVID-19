@@ -1,0 +1,12 @@
+name: COVID-19
+title: COVID-19
+username: chrl3hr5
+account: chrl3hr5
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14841017
+bundleId: 10356951
+url: https://chrl3hr5.shinyapps.io/COVID-19/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
