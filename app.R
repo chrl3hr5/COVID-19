@@ -93,8 +93,7 @@ server <- function(input, output) {
       setView(lng = 78, lat = 20, zoom = 2) %>%
       addTiles(urlTemplate = "") %>%
       setMaxBounds(lng1 = 180, lat1 = 84, lng2 = -140, lat2 = -84) %>%
-      addPolygons(fillColor = ~ palette()(map_value), stroke = F, popup = lapply(map_data_with_popup()$popup, HTML), label = lapply(map_data_with_popup()$label, HTML),
-                  highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE)) %>%
+      addPolygons(fillColor = ~ palette()(map_value), stroke = F, popup = lapply(map_data_with_popup()$popup, HTML), label = lapply(map_data_with_popup()$label, HTML), highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE)) %>%
       addLegend("topright", pal = palette(), values = ~map_value, title = "Value", opacity = 1)
   })
   output$Plots <- renderPlotly({
