@@ -1,5 +1,5 @@
 
-# [COVID-19 Tracker](https://chrl3hr5.shinyapps.io/COVID-19_Tracker/) <img src="sticker/sticker.png" align="right" width="120" />
+# [COVID-19 Tracker](https://chrl3hr5.shinyapps.io/COVID-19/) <img src="sticker/sticker.png" align="right" width="120" />
 
 A shiny web application for tracking the spread of COVID-19 globally.
 
@@ -18,7 +18,5 @@ time or against each other.
 <img src="figures/Visualization.png" align="center" />
 
 <b> Data Source </b> - [COVID-19 Data
-Hub](https://github.com/covid19datahub/COVID19)
-
-<b> Map Source </b> -
-[geoBoundaries](https://github.com/wmgeolab/geoBoundaries)
+Hub](https://github.com/covid19datahub/COVID19) <br> <b> Map Source
+</b> - [geoBoundaries](https://github.com/wmgeolab/geoBoundaries)
