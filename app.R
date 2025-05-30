@@ -64,7 +64,7 @@ server <- function(input, output) {
       map_value = as.numeric(.data[[input$information]]),
       shapeName = `Administrative Area Level 1`, .keep = "none")
     values <- rep(NA, nrow(polygons))
-    indexes <- match(polygons$shapeName, filtered_data$shapeName)
+    indexes <- match(polygons$name, filtered_data$shapeName)
     values[!is.na(indexes)] <- filtered_data$map_value[indexes[!is.na(indexes)]]
     polygons$map_value <- values
     polygons
@@ -73,8 +73,8 @@ server <- function(input, output) {
   map_data_with_text <- reactive({
     req(map_data_merged())
     map_data_with_text <- map_data_merged()
-    map_data_with_text$label <- paste0('<center> <p> <b>', map_data_with_text$shapeName, '</b> </br> (Click for info) </p> </center>')
-    map_data_with_text$popup <- paste0('<p> <b>', map_data_with_text$shapeName, '</b>', '</br> <b> Date: </b>', input$time, '</br> <b>', input$information, ': </b>', ifelse(is.na(map_data_with_text$map_value), "No data", map_data_with_text$map_value),'</p>')
+    map_data_with_text$label <- paste0('<center> <p> <b>', map_data_with_text$name, '</b> </br> (Click for info) </p> </center>')
+    map_data_with_text$popup <- paste0('<p> <b>', map_data_with_text$name, '</b>', '</br> <b> Date: </b>', input$time, '</br> <b>', input$information, ': </b>', ifelse(is.na(map_data_with_text$map_value), "No data", map_data_with_text$map_value),'</p>')
     map_data_with_text
   })
   # Creating palette based on country values for the selected variable
@@ -83,10 +83,15 @@ server <- function(input, output) {
   })
   # Rendering map
   output$map <- renderLeaflet({
-    leaflet(map_data_with_text(), options = leafletOptions(minZoom = 2)) %>%
+    leaflet(options = leafletOptions(minZoom = 2)) %>%
       setView(lng = 78, lat = 20, zoom = 2) %>%
       addTiles(urlTemplate = "") %>%
-      setMaxBounds(lng1 = 180, lat1 = 84, lng2 = -140, lat2 = -84) %>%
+      setMaxBounds(lng1 = 180, lat1 = 84, lng2 = -140, lat2 = -84)
+  })
+  observe({
+    leafletProxy("map", data = map_data_with_text()) %>%
+      clearShapes() %>%
+      clearControls() %>%
       addPolygons(fillColor = ~ palette()(map_value), stroke = F, popup = lapply(map_data_with_text()$popup, HTML), label = lapply(map_data_with_text()$label, HTML), highlight = highlightOptions(weight = 2, fillOpacity = 0.5, color = "black", opacity = 0.5, bringToFront = TRUE, sendToBack = TRUE)) %>%
       addLegend("topright", pal = palette(), values = ~map_value, title = "Value", opacity = 1)
   })
