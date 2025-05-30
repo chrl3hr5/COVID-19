@@ -2,6 +2,8 @@
 # [COVID-19 Tracker](https://chrl3hr5.shinyapps.io/COVID-19/) <img src="sticker/sticker.png" align="right" width="120" />
 
 A shiny web application for tracking the spread of COVID-19 globally.
+Click [here](https://chrl3hr5.shinyapps.io/COVID-19/) to run the
+application.
 
 <i> The app includes two sections - </i>
 
