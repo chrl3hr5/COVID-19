@@ -3,7 +3,7 @@ polygons <- ne_countries(returnclass = "sf")
 
 # Check for the presence of polygon data file and extract data from web if file is unavailable (Source: https://github.com/wmgeolab/geoBoundaries)
 if(file.exists('data/india.rds')) {
-   polygons <- readRDS('data/india.rds')
+   india <- readRDS('data/india.rds')
 } else {
   iso3 <- "IND"
   adm_level <- "ADM0"
