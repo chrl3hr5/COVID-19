@@ -1,35 +1,21 @@
-# Check for the presence of polygon data file and extract data from web if file is unavailable
-if(file.exists('data/simplified_polygons.rds')) {
-  polygons <- readRDS('data/simplified_polygons.rds')
+# Getting world polygons
+polygons <- ne_countries(returnclass = "sf")
+
+# Check for the presence of polygon data file and extract data from web if file is unavailable (Source: https://github.com/wmgeolab/geoBoundaries)
+if(file.exists('data/india.rds')) {
+   polygons <- readRDS('data/india.rds')
 } else {
-  # API to obtain up-to-date boundaries (Source: https://github.com/wmgeolab/geoBoundaries)
-  url <- "https://api.github.com/repos/wmgeolab/geoBoundaries/contents/sourceData/gbOpen"
-  
-  # Obtaining country codes
-  country_codes <- unique(substr(sapply(fromJSON(content(GET(url), "text"))$name, as.character), 1, 3))
-  
-  # Obtaining polygons for world countries
-  polygons <- data.frame()
+  iso3 <- "IND"
   adm_level <- "ADM0"
-  for(i in 1:length(country_codes)) {
-    iso3 <- country_codes[i]
-    try(polygons <- rbind(polygons,st_read(fromJSON(content(GET(paste0("https://www.geoboundaries.org/api/current/gbOpen/", iso3, "/", adm_level, "/")), "text"))$simplifiedGeometryGeoJSON)))
-    Sys.sleep(2) # 2 seconds delay between requests
-  }
-  
-  # Simplifying polygon data
-  sf_use_s2(FALSE)
-  polygons_valid <- st_make_valid(polygons)
-  polygons_projected <- st_transform(polygons_valid, crs = 3857)
-  simplified_projected <- st_simplify(polygons_projected, dTolerance = 1000, preserveTopology = TRUE)
-  simplified_sf <- st_transform(simplified_projected, crs = st_crs(polygons))
-  
-  # Saving data
-  saveRDS(simplified_sf,'data/simplified_polygons.rds')
+  india <- st_read(fromJSON(content(GET(paste0("https://www.geoboundaries.org/api/current/gbOpen/", iso3, "/", adm_level, "/")), "text"))$simplifiedGeometryGeoJSON)
+  saveRDS(india,'data/india.rds')
 }
 
-# Getting COVID-19 data
-data <- covid19(polygons$shapeName,verbose = FALSE) # Global COVID-19 data by country
+# Adding India polygons to world data
+polygons <- bind_rows(polygons %>% filter(name != "India"), india %>% mutate(name = "India"))
+
+# Getting COVID-19 data (Source: https://covid19datahub.io/)
+data <- covid19(polygons$name,verbose = FALSE) # Global COVID-19 data by country
 
 # Converting cumulative values to absolute (Source: https://covid19datahub.io/articles/docs.html)
 cumulative_to_individual <- function(x)
