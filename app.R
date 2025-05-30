@@ -19,8 +19,8 @@ ui <- dashboardPage(title = "COVID-19 Tracker",
       menuItem("Visualization", tabName = "Visual", icon = icon("th"))
     ),
     tags$div(tags$p("Created by Digvijay Singh", style = "margin: 0;"),
-             tags$p("GitHub:", tags$a("github.com/chrl3hr5", href = "github.com/chrl3hr5", style = "color: #007BFF;"), style = "margin: 0;"),
-             tags$p("LinkedIn:", tags$a("linkedin.com/in/chrl3hr5", href = "linkedin.com/in/chrl3hr5", style = "color: #007BFF;"), style = "margin: 0;"),
+             tags$p("GitHub:", tags$a("github.com/chrl3hr5", href = "https://github.com/chrl3hr5", target = "_blank", style = "color: #007BFF;"), style = "margin: 0;"),
+             tags$p("LinkedIn:", tags$a("linkedin.com/in/chrl3hr5", href = "https://linkedin.com/in/chrl3hr5", target = "_blank", style = "color: #007BFF;"), style = "margin: 0;"),
     style = "position: absolute; bottom: 10px; left: 15px; font-size: 12px; color: #333333;")
   ),
   dashboardBody(
