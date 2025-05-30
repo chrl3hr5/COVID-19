@@ -11,8 +11,8 @@ source("external/theme.R")
 options(spinner.type = 6, spinner.color = "#0dc5c1", spinner.size = 0.5)
 
 # UI
-ui <- dashboardPage(
-  dashboardHeader(title = span(icon("head-side-mask", "fa-1x"), span("COVID-19", style = "font-size: 17px; font-weight: bold;", span("Tracker", style = "font-size: 17px; font-weight: normal;")))),
+ui <- dashboardPage(title = "COVID-19 Tracker",
+  dashboardHeader(title = tagList(span(icon("head-side-mask", "fa-1x"), span("COVID-19", style = "font-size: 17px; font-weight: bold;", span("Tracker", style = "font-size: 17px; font-weight: normal;"))))),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "Dashboard", icon = icon("dashboard")),
